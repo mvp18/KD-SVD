@@ -136,6 +136,7 @@ def load_xy_data(song, mel_dir, label_dir, train_valid=None):
         total_x_norm = np.expand_dims(total_x_norm, axis=3)
 
     return total_x_norm, total_y
+    # return total_x, total_y
 
 
 # ======================== MEDLEYDB ============================ #
