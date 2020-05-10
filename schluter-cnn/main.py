@@ -39,7 +39,7 @@ model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy
 print(model.summary())
 
 score_string = 'val_acc-{val_acc:.4f}_tr_acc-{acc:.4f}_bestEp-{epoch:02d}'
-model_save_name = './weights/'+score_string+'bs-'+str(args.batch_size)+'_lr-'+str(args.learning_rate)+'_dr-'+str(args.drop_rate)+'.h5'
+model_save_name = './weights/'+score_string+'_bs-'+str(args.batch_size)+'_lr-'+str(args.learning_rate)+'_dr-'+str(args.drop_rate)+'.h5'
 
 checkpoint = ModelCheckpoint(filepath=model_save_name, monitor='val_acc', verbose=1, save_weights_only=False, save_best_only=True, mode='auto')
 
