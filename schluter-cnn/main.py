@@ -53,10 +53,10 @@ Y_tr = np_utils.to_categorical(y_train, 2)
 X_val, y_val = load_xy_data(None, MEL_JAMENDO_DIR, JAMENDO_LABEL_DIR, 'valid')
 Y_val = np_utils.to_categorical(y_val, 2)
 
-print("Train Data Shape", x_train.shape, y_train.shape)
-print("Val Data Shape", x_val.shape, y_val.shape)
+print("Train Data Shape", X_tr.shape, Y_tr.shape)
+print("Val Data Shape", X_val.shape, Y_val.shape)
 
-model.fit(x_train, y_train, batch_size=args.batch_size, epochs=args.num_epochs, callbacks=[checkpoint, earlyStopping, reduce_lr],
-				  shuffle=True, validation_data=(x_val, y_val))
+model.fit(X_tr, Y_tr, batch_size=args.batch_size, epochs=args.num_epochs, callbacks=[checkpoint, earlyStopping, reduce_lr], shuffle=True, 
+	        validation_data=(X_val, Y_val))
 
 print("Finished!")
