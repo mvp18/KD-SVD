@@ -56,6 +56,6 @@ print("Train Data Shape", X_tr.shape, Y_tr.shape)
 print("Val Data Shape", X_val.shape, Y_val.shape)
 
 model.fit(X_tr, Y_tr, batch_size=args.batch_size, epochs=args.num_epochs, shuffle=True, validation_data=(X_val, Y_val), 
-	       callbacks=[checkpoint, earlyStopping, reduce_lr])
+	      callbacks=[checkpoint, earlyStopping, reduce_lr])
 
 print("Finished!")

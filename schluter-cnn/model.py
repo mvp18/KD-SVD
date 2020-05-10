@@ -1,4 +1,4 @@
-from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Activation, Flatten, LeakyReLU 
 
 def Schluter_CNN(dropout_rate):
