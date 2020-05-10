@@ -90,8 +90,8 @@ def load_xy_data(song, mel_dir, label_dir, train_valid=None):
 
         assert len(total_x) == len(total_y)
 
-        total_x = np.array(total_x)
-        total_y = np.array(total_y)
+        total_x = np.array(total_x, dtype='float32')
+        total_y = np.array(total_y, dtype='float32')
 
         # calculate mean and std to normalize
         if train_valid == "train":
@@ -120,8 +120,9 @@ def load_xy_data(song, mel_dir, label_dir, train_valid=None):
             y_label = y[i + int(CNN_INPUT_SIZE // 2) + 1]
             total_x.append(x_segment)
             total_y.append(y_label)
-        total_x = np.array(total_x)
-        total_y = np.array(total_y)
+        
+        total_x = np.array(total_x, dtype='float32')
+        total_y = np.array(total_y, dtype='float32')
 
         # normalize with training mean, std
         try:

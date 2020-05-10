@@ -1,11 +1,9 @@
 import os
 import numpy as np
-import keras
 import tensorflow as tf
-from keras.optimizers import SGD
-from keras.utils import np_utils
-from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
-from keras import backend as K
+from tensorflow import keras
+from tensorflow.keras.optimizers import SGD
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 import h5py
 import argparse
 
@@ -48,10 +46,10 @@ earlyStopping = EarlyStopping(monitor='val_accuracy', patience=args.early_stop, 
 reduce_lr = ReduceLROnPlateau(monitor='val_accuracy', factor=0.2, patience=args.reduce_lr, verbose=1, min_lr=1e-8)
 
 X_tr, y_train = load_xy_data(None, MEL_JAMENDO_DIR, JAMENDO_LABEL_DIR, 'train')
-Y_tr = np_utils.to_categorical(y_train, 2)
+Y_tr = keras.utils.np_utils.to_categorical(y_train, 2)
 
 X_val, y_val = load_xy_data(None, MEL_JAMENDO_DIR, JAMENDO_LABEL_DIR, 'valid')
-Y_val = np_utils.to_categorical(y_val, 2)
+Y_val = keras.utils.np_utils.to_categorical(y_val, 2)
 
 print("Train Data Shape", X_tr.shape, Y_tr.shape)
 print("Val Data Shape", X_val.shape, Y_val.shape)

@@ -1,17 +1,11 @@
-from keras.models import Sequential, Model
-from keras.layers import Dense, Dropout, Activation, Flatten
-from keras.layers import Conv2D, MaxPooling2D
-from keras.layers.advanced_activations import LeakyReLU
-
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Activation, Flatten, LeakyReLU 
 
 def Schluter_CNN(dropout_rate):
     ''' Model from Schluter et al. (2015 ISMIR Data Augmentation paper)
     Data input size : (input_frame_size, n_melbins, 1) == (115, 80, 1)
     Args:
         dropout_rate : dropout rate at the dense layer
-
-    Return:
-        None
     '''
     input_shape = (80, 115, 1)
     model = Sequential()
