@@ -1,52 +1,43 @@
 import os
 import sys
 import numpy as np
-import pickle
-import keras
-from keras.optimizers import SGD, Adam
-from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
-from sklearn.metrics import f1_score, precision_score, recall_score, confusion_matrix
-from keras.models import load_model
 import tensorflow as tf
-from scipy.signal import medfilt
+from sklearn.metrics import f1_score, precision_score, recall_score, confusion_matrix
 import argparse
+import h5py
 from load_data import *
-from model import *
 from config_rnn import *
-
-np.random.seed(0)
-
 # set gpu number 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model_name', type=str)
-parser.add_argument('--dataset', type=str)
+parser.add_argument('-model', '--model_name', default='val_acc-0.8403_tr_acc-0.9234_bestEp-02_bs-64_lr-0.0001.h5', type=str)
+parser.add_argument('-data', '--dataset', default='jamendo', type=str)
+parser.add_argument('-seed', '--rand_seed', default=0, type=int)
+
 args = parser.parse_args()
 
+np.random.seed(args.rand_seed)
 
 def test(model_name, test_set, song=None):
-    ''' Test the model
+    ''' 
+    Test the model
     '''
-    if test_set == 'test':
-        x_test, y_test = load_xy_data(song, MEL_JAMENDO_DIR, JAMENDO_LABEL_DIR, model_name)
+    if test_set == 'jamendo':
+        x_test, y_test = load_xy_data(song, MEL_JAMENDO_DIR, JAMENDO_LABEL_DIR)
     elif test_set == 'vibrato':
         x_test, y_test = load_xy_data(song, MEL_VIB_DIR, '', model_name)
     elif test_set[:3] == 'voc':
         MLD = '../loudness/' + test_set + '/leglaive_mel_dir/'
         x_test, y_test = load_xy_data_mdb(song, MLD, MDB_LABEL_DIR, model_name)
 
-    y_pred = loaded_model.predict(x_test, verbose=1)
-    y_pred_cont = y_pred.copy().reshape(-1)
-
-    y_pred[y_pred >= THRESHOLD] = True
-    y_pred[y_pred < THRESHOLD] = False
-    y_pred = y_pred.astype(int)
+    y_pred = np.max(loaded_model.predict(x_test, verbose=1), axis=2)
 
     y_pred = y_pred.reshape(-1)
     y_test = y_test.reshape(-1)
 
     accuracy_single = (len(y_test) - np.sum(np.abs(y_pred - y_test))) * 100.0 / len(y_test)
+    print(accuracy_single.shape)
     accuracy = np.mean(accuracy_single)
     f1 = f1_score(y_test, y_pred, average='binary')
     pr = precision_score(y_test, y_pred, average='binary')
@@ -56,7 +47,7 @@ def test(model_name, test_set, song=None):
     print('Recall: ', re)
     print('F1-score: ', f1)
 
-    return y_pred_cont, y_pred, y_test
+    return y_pred, y_test
 
 
 if __name__ == '__main__':
@@ -73,8 +64,7 @@ if __name__ == '__main__':
 
     # load model
     model_name = args.model_name
-    loaded_model = load_model('./weights/rnn_' + model_name + '.h5')
-    print("loaded model")
+    loaded_model = tf.keras.models.load_model('./weights/'+model_name)
     print(loaded_model.summary())
 
     for test_set in test_sets:
@@ -84,7 +74,6 @@ if __name__ == '__main__':
 
         if test_set == 'jamendo':
             list_of_songs = os.listdir(MEL_JAMENDO_DIR + 'test')
-            test_set = 'test'
         elif test_set == 'vibrato':  # vibrato test
             list_of_songs = os.listdir(MEL_VIB_DIR)
         elif test_set[:3] == 'voc':  # snr test
@@ -92,19 +81,11 @@ if __name__ == '__main__':
             list_of_songs = os.listdir(MLD)
 
         for song in list_of_songs:
-            y_pred_cont, y_pred, y_test = test(model_name, test_set, song)
+            y_pred, y_test = test(model_name, test_set, song)
 
             for i in range(len(y_pred)):
                 y_preds.append(y_pred[i])
                 y_tests.append(y_test[i])
-
-            y_pred = y_pred.reshape(-1)
-            y_pred_cont = y_pred_cont.reshape(-1)
-            predicted_values[song] = [y_pred_cont, y_pred, y_test]
-
-        if test_set == 'test':
-            test_set = 'jamendo'
-        pickle.dump(predicted_values, open(test_set + '.pkl', 'wb'))
 
         # convert list to np array 
         y_preds = np.array(y_preds)
