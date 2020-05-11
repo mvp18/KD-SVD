@@ -55,7 +55,7 @@ def load_single_xy(audio_file, mel_dir, label_dir):
         audio_label_file = os.path.join(label_dir, audio_file_name + '.lab')
         label = load_label(audio_feature, audio_label_file)
 
-    print('File:{}; Audio Feature Shape:{}.'.format(audio_file, audio_feature.shape))
+    print('File : {}; Audio Feature Shape:{}.'.format(audio_file, audio_feature.shape))
     
     return audio_feature, label
 

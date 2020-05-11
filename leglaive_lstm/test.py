@@ -40,7 +40,9 @@ def test(model_name, test_set, song=None):
     f1 = f1_score(y_test, y_pred, average='binary')
     pr = precision_score(y_test, y_pred, average='binary')
     re = recall_score(y_test, y_pred, average='binary')
-    print('Accuracy: ' + str(accuracy))
+    
+    print('Sample Scores...\n')
+    print('Accuracy: ' + str(accuracy_single))
     print('Precision: ', pr)
     print('Recall: ', re)
     print('F1-score: ', f1)
@@ -100,7 +102,7 @@ if __name__ == '__main__':
         fp_rate = fp / (fp + tn)
         fn_rate = fn / (fn + tp)
 
-        print("TEST SCORES")
+        print("TEST SCORES OVERALL\n")
         print('Acc %.4f' % acc)
         print('Precision %.4f' % pr)
         print('Recall %.4f' % re)
