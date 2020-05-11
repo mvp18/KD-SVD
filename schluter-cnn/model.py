@@ -1,5 +1,5 @@
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Activation, Flatten, LeakyReLU 
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Activation, Flatten, LeakyReLU, Softmax 
 
 def Schluter_CNN(dropout_rate):
     ''' Model from Schluter et al. (2015 ISMIR Data Augmentation paper)
@@ -26,7 +26,8 @@ def Schluter_CNN(dropout_rate):
     model.add(Dropout(dropout_rate))
     model.add(Dense(64))
     model.add(Dropout(dropout_rate))
-    model.add(Dense(2, activation='softmax'))
+    model.add(Dense(2))
+    model.add(Softmax(axis=1))
 
     return model
 

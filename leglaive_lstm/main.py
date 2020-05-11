@@ -32,7 +32,7 @@ model = Leglaive_RNN(timesteps=RNN_INPUT_SIZE)
 
 opt = Adam(lr=args.learning_rate)
 
-model.compile(loss='binary_crossentropy', optimizer=opt, metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
 print(model.summary())
 
 score_string = 'val_acc-{val_accuracy:.4f}_tr_acc-{accuracy:.4f}_bestEp-{epoch:02d}'
@@ -44,13 +44,16 @@ earlyStopping = EarlyStopping(monitor='val_accuracy', patience=args.early_stop, 
     
 reduce_lr = ReduceLROnPlateau(monitor='val_accuracy', factor=0.8, patience=args.reduce_lr, verbose=1, min_lr=1e-8)
 
-x_train, y_train = load_xy_data(None, MEL_JAMENDO_DIR, JAMENDO_LABEL_DIR, 'train')
-x_val, y_val = load_xy_data(None, MEL_JAMENDO_DIR, JAMENDO_LABEL_DIR, 'valid')
+X_tr, y_train = load_xy_data(None, MEL_JAMENDO_DIR, JAMENDO_LABEL_DIR, 'train')
+Y_tr = to_categorical(y_train, 2)
 
-print("Train Data Shape", x_train.shape, y_train.shape)
-print("Val Data Shape", x_val.shape, y_val.shape)
+X_val, y_val = load_xy_data(None, MEL_JAMENDO_DIR, JAMENDO_LABEL_DIR, 'valid')
+Y_val = to_categorical(y_val, 2)
 
-model.fit(x_train, y_train, batch_size=args.batch_size, epochs=args.num_epochs, shuffle=True, validation_data=(x_val, y_val),
+print("Train Data Shape", X_tr.shape, Y_tr.shape)
+print("Val Data Shape", X_val.shape, Y_val.shape)
+
+model.fit(X_tr, Y_tr, batch_size=args.batch_size, epochs=args.num_epochs, shuffle=True, validation_data=(X_val, Y_val), 
           callbacks=[checkpoint, earlyStopping, reduce_lr])
 
 print("Finished training")
