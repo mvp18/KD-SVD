@@ -28,7 +28,6 @@ def load_label(audio_spec, audio_label_file):
 
     return label
 
-
 def load_single_xy(audio_file, mel_dir, label_dir):
     ''' Create (audio feature, label) data pair for the givne audio
 
@@ -58,7 +57,6 @@ def load_single_xy(audio_file, mel_dir, label_dir):
     print('\nFile : {}; Audio Feature Shape:{}.'.format(audio_file, audio_feature.shape))
     
     return audio_feature, label
-
 
 def load_xy_data(song, mel_dir, label_dir, train_valid=None):
     ''' Load all x,y pair in the given dataset into a list of x_data and list of y_label which are segmented into RNN_INPUT_SIZE shape.
@@ -94,7 +92,7 @@ def load_xy_data(song, mel_dir, label_dir, train_valid=None):
         if train_valid == "train":
             mean = total_x.mean(axis=0)
             std = total_x.std(axis=0)
-            np.save("train_mean_std.npy", [mean, std])
+            # np.save("train_mean_std.npy", [mean, std])
         else:
             try:
                 mean_std = np.load("train_mean_std.npy")

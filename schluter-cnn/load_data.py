@@ -29,7 +29,6 @@ def load_label(audio_spec, audio_label_file):
 
     return label
 
-
 def load_single_xy(audio_file, mel_dir, label_dir):
     ''' Create (melgram, label) data pair for the given audio
     
@@ -58,7 +57,6 @@ def load_single_xy(audio_file, mel_dir, label_dir):
     print('\nFile : {}; Audio Feature Shape:{}.'.format(audio_file, audio_mel_feature.shape))
 
     return audio_mel_feature, label
-
 
 def load_xy_data(song, mel_dir, label_dir, train_valid=None):
     ''' Load all x,y pair into a list of x_data and list of y_labels which are segmented into CNN_INPUT_SIZE shape.
@@ -98,7 +96,7 @@ def load_xy_data(song, mel_dir, label_dir, train_valid=None):
         if train_valid == "train":
             mean = total_x.mean(axis=0)
             std = total_x.std(axis=0)
-            np.save("train_mean_std.npy", [mean, std])
+            # np.save("train_mean_std.npy", [mean, std])
         elif train_valid == 'valid':
             try:
                 mean_std = np.load("train_mean_std.npy")
@@ -110,7 +108,6 @@ def load_xy_data(song, mel_dir, label_dir, train_valid=None):
 
         total_x_norm = (total_x - mean) / std
         total_x_norm = np.expand_dims(total_x_norm, axis=3)
-        print(total_x_norm.shape)
 
     else:
         audio_file = song

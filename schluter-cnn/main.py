@@ -17,6 +17,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 parser = argparse.ArgumentParser()
 
+parser.add_argument('-model', '--model_type', help="teacher/student/ kd (knowledge distillation)", default='teacher', type=str)
 parser.add_argument('-bs', '--batch_size', help="batch size used for training", default=32, type=int)
 parser.add_argument('-lr', '--learning_rate', help="learning rate for sgd", default=1e-4, type=float)
 parser.add_argument('-dr', '--drop_rate', default=0.2, type=float)
@@ -29,7 +30,14 @@ args = parser.parse_args()
 
 np.random.seed(args.rand_seed)
 
-model = Schluter_CNN(args.drop_rate)
+if args.model_type=='teacher': model = Schluter_CNN(args.drop_rate)
+elif args.model_type=='student': model = CNN_small(args.drop_rate)
+elif args.model_type=='kd':
+    teacher = Schluter_CNN(args.drop_rate)
+    student = CNN_small(args.drop_rate)
+else:
+    print('Invalid model type specified!')
+    sys.exit()
 
 opt = SGD(lr=args.learning_rate, momentum=0.9, nesterov=True)
 
@@ -37,7 +45,7 @@ model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy
 
 print(model.summary())
 
-score_string = 'val_acc-{val_accuracy:.4f}_tr_acc-{accuracy:.4f}_bestEp-{epoch:02d}'
+score_string = args.model_type+'_val_acc-{val_accuracy:.4f}_tr_acc-{accuracy:.4f}_bestEp-{epoch:02d}'
 model_save_name = './weights/'+score_string+'_bs-'+str(args.batch_size)+'_lr-'+str(args.learning_rate)+'_dr-'+str(args.drop_rate)+'.h5'
 
 checkpoint = ModelCheckpoint(filepath=model_save_name, monitor='val_accuracy', verbose=1, save_weights_only=False, save_best_only=True, mode='auto')
