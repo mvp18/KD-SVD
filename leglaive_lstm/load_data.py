@@ -55,7 +55,8 @@ def load_single_xy(audio_file, mel_dir, label_dir):
         audio_label_file = os.path.join(label_dir, audio_file_name + '.lab')
         label = load_label(audio_feature, audio_label_file)
 
-    print(audio_file, audio_feature.shape)
+    print('File:{}; Audio Feature Shape:{}.'.format(audio_file, audio_feature.shape))
+    
     return audio_feature, label
 
 
@@ -131,6 +132,8 @@ def load_xy_data(song, mel_dir, label_dir, train_valid=None):
         total_x_norm = (total_x - mean) / std
         total_x_norm = np.swapaxes(total_x_norm, 1, 2)
         total_y = np.expand_dims(total_y, 2)
+
+        print('X shape:{}; Y shape:{}.'.format(total_x_norm.shape, total_y.shape))
 
     return total_x_norm, total_y
 

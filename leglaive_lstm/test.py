@@ -31,14 +31,12 @@ def test(model_name, test_set, song=None):
         MLD = '../loudness/' + test_set + '/leglaive_mel_dir/'
         x_test, y_test = load_xy_data_mdb(song, MLD, MDB_LABEL_DIR, model_name)
 
-    y_pred = np.max(loaded_model.predict(x_test, verbose=1), axis=2)
+    y_pred = np.argmax(loaded_model.predict(x_test, verbose=1), axis=2)
 
-    y_pred = y_pred.reshape(-1)
-    y_test = y_test.reshape(-1)
+    y_pred = y_pred.reshape(-1).astype(int)
+    y_test = y_test.reshape(-1).astype(int)
 
     accuracy_single = (len(y_test) - np.sum(np.abs(y_pred - y_test))) * 100.0 / len(y_test)
-    print(accuracy_single.shape)
-    accuracy = np.mean(accuracy_single)
     f1 = f1_score(y_test, y_pred, average='binary')
     pr = precision_score(y_test, y_pred, average='binary')
     re = recall_score(y_test, y_pred, average='binary')
