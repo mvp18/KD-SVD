@@ -11,3 +11,8 @@ def Leglaive_RNN(timesteps, data_dim=80):
     model.add(Softmax(axis=2))
 
     return model
+
+if __name__ == '__main__':
+    model = Leglaive_RNN(218)
+    print(model.summary())
+

@@ -36,12 +36,12 @@ def test(model_name, test_set, song=None):
     y_pred = y_pred.reshape(-1).astype(int)
     y_test = y_test.reshape(-1).astype(int)
 
-    accuracy_single = (len(y_test) - np.sum(np.abs(y_pred - y_test))) * 100.0 / len(y_test)
+    accuracy_single = (len(y_test) - np.sum(np.abs(y_pred - y_test)))/ len(y_test)
     f1 = f1_score(y_test, y_pred, average='binary')
     pr = precision_score(y_test, y_pred, average='binary')
     re = recall_score(y_test, y_pred, average='binary')
     
-    print('Sample Scores...\n')
+    print('\nSample Scores...\n')
     print('Accuracy: ' + str(accuracy_single))
     print('Precision: ', pr)
     print('Recall: ', re)
