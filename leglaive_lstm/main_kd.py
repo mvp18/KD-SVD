@@ -67,6 +67,8 @@ Y_tr = to_categorical(y_train, 2)
 X_val, y_val = load_xy_data(None, MEL_JAMENDO_DIR, JAMENDO_LABEL_DIR, 'valid')
 Y_val = to_categorical(y_val, 2)
 
+print('\nLoading complete!\n')
+
 teacher_tr_logits = teacher.predict(X_tr, verbose=1)
 teacher_val_logits = teacher.predict(X_val, verbose=1)
 
@@ -102,7 +104,7 @@ corr_tr_acc = tr_acc[idx]
 
 df_save = pd.DataFrame({'tr_loss':tr_loss, 'val_loss':val_loss, 'tr_acc':tr_acc, 'val_acc':val_acc})
 
-best_model_name = 'val_acc-'+'{0:.4f}_kd'.format(best_val_acc)+'_tr_acc-'+'{0:.4f}'.format(corr_tr_acc)+'_bestEp-'+str(idx+1)+\
+best_model_name = 'val_acc-'+'{0:.4f}_kd'.format(best_val_acc)+'_tr_acc-'+'{0:.4f}'.format(corr_tr_acc)+'_bestEp-'+'{:02d}'.format(idx+1)+\
                   '_bs-'+str(args.batch_size)+'_lr-'+str(args.learning_rate)+'_temp-'+str(args.temperature)+'_alpha-'+ str(args.alpha)+'.h5'
 
 save_path = './results/'
