@@ -1,5 +1,5 @@
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Bidirectional, TimeDistributed, Softmax
+from tensorflow.keras.layers import LSTM, Dense, Bidirectional, TimeDistributed, Softmax, Concatenate, Lambda
 
 def Leglaive_RNN(timesteps, data_dim=80):
     # input shape : (batch_size, timestep, data_dim=80)

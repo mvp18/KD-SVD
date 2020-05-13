@@ -11,7 +11,7 @@ from config_rnn import *
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-model', '--model_name', default='val_acc-0.8403_tr_acc-0.9234_bestEp-02_bs-64_lr-0.0001.h5', type=str)
+parser.add_argument('-model', '--model_name', default='teacher_val_acc-0.8403_tr_acc-0.9234_bestEp-02_bs-64_lr-0.0001.h5', type=str)
 parser.add_argument('-data', '--dataset', default='jamendo', type=str)
 parser.add_argument('-seed', '--rand_seed', default=0, type=int)
 
@@ -46,6 +46,9 @@ def test(model_name, test_set, song=None):
     print('Precision: ', pr)
     print('Recall: ', re)
     print('F1-score: ', f1)
+
+    del x_test
+    del y_test
 
     return y_pred, y_test
 
