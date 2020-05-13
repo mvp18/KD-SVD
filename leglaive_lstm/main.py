@@ -66,19 +66,24 @@ print("Val Data Shape", X_val.shape, Y_val.shape)
 history = model.fit(X_tr, Y_tr, batch_size=args.batch_size, epochs=args.num_epochs, shuffle=True, validation_data=(X_val, Y_val), 
                     callbacks=[checkpoint, earlyStopping, reduce_lr])
 
-idx, best_val_acc = np.argmax(history['val_acc']), np.max(history['val_acc'])
-tr_acc = history['acc'][idx]
+tr_loss = history.history['loss']
+val_loss = history.history['val_loss']
+tr_acc = history.history['acc']
+val_acc = history.history['val_acc']
 
-df_save = pd.DataFrame({'tr_loss':history['loss'], 'val_loss':history['val_loss'], 'tr_acc':history['acc'], 'val_acc':history['val_acc']})
+idx, best_val_acc = np.argmax(val_acc), np.max(val_acc)
+corr_tr_acc = tr_acc[idx]
 
-best_model_name = 'val_acc-'+'{0:.4f}_'.format(best_val_acc)+args.model_type+'_tr_acc-'+'{0:.4f}'.format(tr_acc)+'_bestEp-'+str(idx+1)+\
+df_save = pd.DataFrame({'tr_loss':tr_loss, 'val_loss':val_loss, 'tr_acc':tr_acc, 'val_acc':val_acc})
+
+best_model_name = 'val_acc-'+'{0:.4f}_'.format(best_val_acc)+args.model_type+'_tr_acc-'+'{0:.4f}'.format(corr_tr_acc)+'_bestEp-'+str(idx+1)+\
                   '_bs-'+str(args.batch_size)+'_lr-'+str(args.learning_rate)+'.h5'
 
 save_path = './results/'
 if not os.path.exists(save_path): os.makedirs(save_path)
 
 df_save = test(best_model_name, args.model_type, df_save)
-suffix = 'test_acc-'+'{0:.4f}_'.format(df_save['test_acc'])+best_model_name[:-3]
+suffix = best_model_name[:-3]+'test_acc-'+'{0:.4f}_'.format(df_save['test_acc'])
 df_save.to_csv(open(save_path + suffix + '.csv', 'w'))
 
 print("Finished!")

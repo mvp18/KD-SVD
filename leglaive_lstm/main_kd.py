@@ -4,7 +4,6 @@ import pandas as pd
 from scipy.special import softmax
 import sys
 import tensorflow as tf
-from tensorflow import keras
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
@@ -59,7 +58,7 @@ if args.alpha==None: args.alpha=1/(args.temperature**2)
 student.compile(optimizer=opt, loss=lambda y_true, y_pred: kd_loss(y_true, y_pred, args.alpha), 
                 metrics=[acc, categorical_crossentropy, soft_logloss])
 
-print('Student Model:\n')
+print('\nStudent Model:\n')
 print(student.summary())
 
 X_tr, y_train = load_xy_data(None, MEL_JAMENDO_DIR, JAMENDO_LABEL_DIR, 'train')
@@ -93,13 +92,18 @@ reduce_lr = ReduceLROnPlateau(monitor='val_acc', factor=0.8, patience=args.reduc
 history = student.fit(X_tr, Y_tr, batch_size=args.batch_size, epochs=args.num_epochs, shuffle=True, validation_data=(X_val, Y_val), 
                     callbacks=[checkpoint, earlyStopping, reduce_lr])
 
-idx, best_val_acc = np.argmax(history['val_acc']), np.max(history['val_acc'])
-tr_acc = history['acc'][idx]
+tr_loss = history.history['loss']
+val_loss = history.history['val_loss']
+tr_acc = history.history['acc']
+val_acc = history.history['val_acc']
 
-df_save = pd.DataFrame({'tr_loss':history['loss'], 'val_loss':history['val_loss'], 'tr_acc':history['acc'], 'val_acc':history['val_acc']})
+idx, best_val_acc = np.argmax(val_acc), np.max(val_acc)
+corr_tr_acc = tr_acc[idx]
 
-best_model_name = 'val_acc-'+'{0:.4f}_kd'.format(best_val_acc)+'_tr_acc-'+'{0:.4f}'.format(tr_acc)+'_bestEp-'+str(idx+1)+'_bs-'+str(args.batch_size)+\
-                  '_lr-'+str(args.learning_rate)+'_temp-'+str(args.temperature)+'_alpha-'+ str(args.alpha)+'.h5'
+df_save = pd.DataFrame({'tr_loss':tr_loss, 'val_loss':val_loss, 'tr_acc':tr_acc, 'val_acc':val_acc})
+
+best_model_name = 'val_acc-'+'{0:.4f}_kd'.format(best_val_acc)+'_tr_acc-'+'{0:.4f}'.format(corr_tr_acc)+'_bestEp-'+str(idx+1)+\
+                  '_bs-'+str(args.batch_size)+'_lr-'+str(args.learning_rate)+'_temp-'+str(args.temperature)+'_alpha-'+ str(args.alpha)+'.h5'
 
 save_path = './results/'
 if not os.path.exists(save_path): os.makedirs(save_path)
