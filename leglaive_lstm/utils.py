@@ -69,7 +69,7 @@ def sample_scores(loaded_model, model_type, song):
 
 def test(model_name, model_type, df_save):
 
-	loaded_model = tf.keras.models.load_model('./weights/'+model_name)
+	loaded_model = tf.keras.models.load_model('./weights/'+model_name, custom_objects={'kd_loss':kd_loss})
 	print(loaded_model.summary())
 
 	list_of_songs = os.listdir(MEL_JAMENDO_DIR + 'test')
