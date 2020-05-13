@@ -25,14 +25,18 @@ def soft_logloss(y_true, y_pred):
 	y_pred_softs = y_pred[:, :, 2:]
 	return logloss(y_true_softs, y_pred_softs)
 
-def kd_loss(y_true, y_pred, alpha):
+def kd_loss(alpha):
 
-	y_true, y_true_softs = y_true[: , :, :2], y_true[: , :, 2:]
-	y_pred, y_pred_softs = y_pred[: , :, :2], y_pred[: , :, 2:]
+	def custom_loss(y_true, y_pred):
+
+		y_true, y_true_softs = y_true[: , :, :2], y_true[: , :, 2:]
+		y_pred, y_pred_softs = y_pred[: , :, :2], y_pred[: , :, 2:]
+		
+		loss = alpha*logloss(y_true, y_pred) + logloss(y_true_softs, y_pred_softs)
 	
-	loss = alpha*logloss(y_true, y_pred) + logloss(y_true_softs, y_pred_softs)
-	
-	return loss
+		return loss
+
+	return custom_loss
 
 def sample_scores(loaded_model, model_type, song):
 

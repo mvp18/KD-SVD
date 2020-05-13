@@ -55,8 +55,7 @@ student = Model(inputs=student.input, outputs=output)
 
 if args.alpha==None: args.alpha=1/(args.temperature**2)
 
-student.compile(optimizer=opt, loss=lambda y_true, y_pred: kd_loss(y_true, y_pred, args.alpha), 
-                metrics=[acc, categorical_crossentropy, soft_logloss])
+student.compile(optimizer=opt, loss=kd_loss(args.alpha), metrics=[acc, categorical_crossentropy, soft_logloss])
 
 print('\nStudent Model:\n')
 print(student.summary())
@@ -92,7 +91,7 @@ earlyStopping = EarlyStopping(monitor='val_acc', patience=args.early_stop, verbo
 reduce_lr = ReduceLROnPlateau(monitor='val_acc', factor=0.8, patience=args.reduce_lr, verbose=1, min_lr=1e-8)
 
 history = student.fit(X_tr, Y_tr, batch_size=args.batch_size, epochs=args.num_epochs, shuffle=True, validation_data=(X_val, Y_val), 
-                    callbacks=[checkpoint, earlyStopping, reduce_lr])
+                      callbacks=[checkpoint, earlyStopping, reduce_lr])
 
 tr_loss = history.history['loss']
 val_loss = history.history['val_loss']
