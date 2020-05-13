@@ -38,9 +38,11 @@ def sample_scores(loaded_model, model_type, song):
 
 	x_test, y_test = load_xy_data(song, MEL_JAMENDO_DIR, JAMENDO_LABEL_DIR)
 
+	y_pred = loaded_model.predict(x_test, verbose=1)
+
 	if model_type=='kd': y_pred = y_pred[:, :, :2]
 
-	y_pred = np.argmax(loaded_model.predict(x_test, verbose=1), axis=2)
+	y_pred = np.argmax(y_pred, axis=2)
 
 	y_pred = y_pred.reshape(-1).astype(int)
 	y_test = y_test.reshape(-1).astype(int)

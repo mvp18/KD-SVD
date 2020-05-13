@@ -67,8 +67,8 @@ Y_tr = to_categorical(y_train, 2)
 X_val, y_val = load_xy_data(None, MEL_JAMENDO_DIR, JAMENDO_LABEL_DIR, 'valid')
 Y_val = to_categorical(y_val, 2)
 
-teacher_tr_logits = teacher.predict(X_tr)
-teacher_val_logits = teacher.predict(X_val)
+teacher_tr_logits = teacher.predict(X_tr, verbose=1)
+teacher_val_logits = teacher.predict(X_val, verbose=1)
 
 Y_tr_soft = softmax(teacher_tr_logits/args.temperature, axis=2)
 Y_tr = np.concatenate((Y_tr, Y_tr_soft), axis=2)
