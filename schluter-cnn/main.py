@@ -1,4 +1,5 @@
 import os
+import shutil
 import numpy as np
 import pandas as pd
 import time
@@ -20,7 +21,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('-model', '--model_type', help="teacher/student", default='teacher', type=str)
+parser.add_argument('-model', '--model_type', help="teacher/student", default='student', type=str)
 parser.add_argument('-bs', '--batch_size', help="batch size used for training", default=32, type=int)
 parser.add_argument('-fs', '--filter_scale', help="1 for teacher, >1 for smaller student models (power of 2 and <=32)", default=1, type=int)
 parser.add_argument('-lr', '--learning_rate', help="learning rate for sgd", default=1e-4, type=float)
@@ -98,6 +99,6 @@ suffix = best_model_name[:-3]+'_acc-{0:.4f}'.format(scores[0])+'_pr-{0:.4f}'.for
 
 df_save.to_csv(open(save_path + suffix + '.csv', 'w'))
 
-if os.path.exists(wts_dir): os.rmdir(wts_dir)
+if os.path.exists(wts_dir): shutil.rmtree(wts_dir)
 
 print("Finished!")

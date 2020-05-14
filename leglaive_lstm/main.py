@@ -1,4 +1,5 @@
 import os
+import shutil
 import numpy as np
 import pandas as pd
 import time
@@ -96,6 +97,6 @@ suffix = best_model_name[:-3]+'_acc-{0:.4f}'.format(scores[0])+'_pr-{0:.4f}'.for
 
 df_save.to_csv(open(save_path + suffix + '.csv', 'w'))
 
-if os.path.exists(wts_dir): os.rmdir(wts_dir)
+if os.path.exists(wts_dir): shutil.rmtree(wts_dir)
 
 print("Finished!")
