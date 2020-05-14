@@ -7,7 +7,9 @@ from tensorflow.keras.metrics import categorical_accuracy
 from sklearn.metrics import f1_score, precision_score, recall_score, confusion_matrix
 import argparse
 import h5py
+
 from load_data import *
+from model import *
 from config_rnn import *
 
 def acc(y_true, y_pred):
@@ -25,14 +27,14 @@ def soft_logloss(y_true, y_pred):
 	y_pred_softs = y_pred[:, :, 2:]
 	return logloss(y_true_softs, y_pred_softs)
 
-def kd_loss(alpha):
+def kd_loss(alpha, temperature):
 
 	def custom_loss(y_true, y_pred):
 
 		y_true, y_true_softs = y_true[: , :, :2], y_true[: , :, 2:]
 		y_pred, y_pred_softs = y_pred[: , :, :2], y_pred[: , :, 2:]
 		
-		loss = alpha*logloss(y_true, y_pred) + logloss(y_true_softs, y_pred_softs)
+		loss = (1-alpha)*logloss(y_true, y_pred) + alpha*(temperature**2)*logloss(y_true_softs, y_pred_softs)
 	
 		return loss
 
@@ -67,10 +69,19 @@ def sample_scores(loaded_model, model_type, song):
 
 	return y_pred, y_test
 
-def test(model_name, model_type, df_save):
+def test(model_name, model_type, df_save, args):
 
-	loaded_model = tf.keras.models.load_model('./weights/'+model_name, custom_objects={'kd_loss':kd_loss})
-	print(loaded_model.summary())
+	model = RNN_small(timesteps=RNN_INPUT_SIZE)
+	model.pop()
+	model_logits = model.layers[-1].output
+	model_logits_T = Lambda(lambda x: x/args.temperature)(model_logits)
+	probs_T = Softmax(axis=2)(model_logits_T)
+	probs_1 = Softmax(axis=2)(model_logits)
+	output = Concatenate()([probs_1, probs_T])
+	model = Model(inputs=model.input, outputs=output)
+
+	model.load_weights('./weights/'+model_name)
+	print(model.summary())
 
 	list_of_songs = os.listdir(MEL_JAMENDO_DIR + 'test')
 
@@ -79,7 +90,7 @@ def test(model_name, model_type, df_save):
 
 	for song in list_of_songs:
 		
-		y_pred, y_test = sample_scores(loaded_model, model_type, song)
+		y_pred, y_test = sample_scores(model, model_type, song)
 
 		for i in range(len(y_pred)):
 			y_preds.append(y_pred[i])

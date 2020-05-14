@@ -24,7 +24,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-bs', '--batch_size', help="batch size used for training", default=64, type=int)
 parser.add_argument('-lr', '--learning_rate', help="learning rate for adam", default=1e-4, type=float)
 parser.add_argument('-temp', '--temperature', help="distillation temperature(>1)", default=2, type=float)
-parser.add_argument('-alpha', '--alpha', help="weight to cce loss with hard targets, if None, wd be set to (1/T^2)", default=None, type=float)
+parser.add_argument('-alpha', '--alpha', help="weight to cce loss with soft targets, 1-alpha to loss with hard targets", default=0.2, type=float)
 parser.add_argument('-e', '--num_epochs', help="number of epochs to run", default=50, type=int)
 parser.add_argument('-es', '--early_stop', default=7, type=int)
 parser.add_argument('-rd_lr', '--reduce_lr', default=5, type=int)
@@ -53,9 +53,7 @@ probs_1 = Softmax(axis=2)(student_logits)
 output = Concatenate()([probs_1, probs_T])
 student = Model(inputs=student.input, outputs=output)
 
-if args.alpha==None: args.alpha=1/(args.temperature**2)
-
-student.compile(optimizer=opt, loss=kd_loss(args.alpha), metrics=[acc, categorical_crossentropy, soft_logloss])
+student.compile(optimizer=opt, loss=kd_loss(args.alpha, args.temperature), metrics=[acc, categorical_crossentropy, soft_logloss])
 
 print('\nStudent Model:\n')
 print(student.summary())
@@ -84,7 +82,7 @@ score_string = 'val_acc-{val_acc:.4f}_kd_tr_acc-{acc:.4f}_bestEp-{epoch:02d}'
 model_save_name = './weights/'+score_string+'_bs-'+str(args.batch_size)+'_lr-'+str(args.learning_rate)+'_temp-'+str(args.temperature)+'_alpha-'+\
                   str(args.alpha)+'.h5'
 
-checkpoint = ModelCheckpoint(filepath=model_save_name, monitor='val_acc', verbose=1, save_weights_only=False, save_best_only=True, mode='auto')
+checkpoint = ModelCheckpoint(filepath=model_save_name, monitor='val_acc', verbose=1, save_weights_only=True, save_best_only=True, mode='auto')
     
 earlyStopping = EarlyStopping(monitor='val_acc', patience=args.early_stop, verbose=1, mode='auto')
     
@@ -109,7 +107,7 @@ best_model_name = 'val_acc-'+'{0:.4f}_kd'.format(best_val_acc)+'_tr_acc-'+'{0:.4
 save_path = './results/'
 if not os.path.exists(save_path): os.makedirs(save_path)
 
-df_save = test(best_model_name, 'kd', df_save)
+df_save = test(best_model_name, 'kd', df_save, args)
 suffix = best_model_name[:-3]+'test_acc-'+'{0:.4f}'.format(df_save['test_acc'])
 df_save.to_csv(open(save_path + suffix + '.csv', 'w'))
 
