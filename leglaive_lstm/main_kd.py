@@ -5,7 +5,6 @@ from scipy.special import softmax
 import sys
 import tensorflow as tf
 from tensorflow.keras.utils import to_categorical
-from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 import h5py
