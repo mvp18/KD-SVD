@@ -33,7 +33,7 @@ args = parser.parse_args()
 
 np.random.seed(args.rand_seed)
 
-teacher = tf.keras.models.load_model('./weights/'+'teacher_val_acc-0.8403_tr_acc-0.9234_bestEp-02_bs-64_lr-0.0001.h5')
+teacher = tf.keras.models.load_model('teacher_val_acc-0.8403_tr_acc-0.9234_bestEp-02_bs-64_lr-0.0001.h5')
 student = RNN_small(timesteps=RNN_INPUT_SIZE)
 
 print('Teacher Model:\n')

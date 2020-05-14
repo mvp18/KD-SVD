@@ -35,7 +35,7 @@ args = parser.parse_args()
 
 np.random.seed(args.rand_seed)
 
-teacher = tf.keras.models.load_model('./weights/'+'teacher_val_acc-0.7920_tr_acc-0.9405_bestEp-05_bs-32_lr-0.0001_dr-0.2_fs-1.h5')
+teacher = tf.keras.models.load_model('teacher_val_acc-0.7920_tr_acc-0.9405_bestEp-05_bs-32_lr-0.0001_dr-0.2_fs-1.h5')
 student = Schluter_CNN(args.drop_rate, args.filter_scale)
 
 print('Teacher Model:\n')
