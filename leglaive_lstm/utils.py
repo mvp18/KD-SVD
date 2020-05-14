@@ -3,6 +3,7 @@ import sys
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.losses import categorical_crossentropy as logloss
+from tensorflow.keras.losses import kullback_leibler_divergence
 from tensorflow.keras.metrics import categorical_accuracy
 from sklearn.metrics import f1_score, precision_score, recall_score, confusion_matrix
 import argparse
@@ -34,7 +35,7 @@ def kd_loss(alpha, temperature):
 		y_true, y_true_softs = y_true[: , :, :2], y_true[: , :, 2:]
 		y_pred, y_pred_softs = y_pred[: , :, :2], y_pred[: , :, 2:]
 		
-		loss = (1-alpha)*logloss(y_true, y_pred) + alpha*(temperature**2)*logloss(y_true_softs, y_pred_softs)
+		loss = (1-alpha)*logloss(y_true, y_pred) + alpha*(temperature**2)*kullback_leibler_divergence(y_true_softs, y_pred_softs)
 	
 		return loss
 
@@ -68,7 +69,7 @@ def sample_scores(loaded_model, model_type, song):
 
 	return y_pred, y_test
 
-def test(model_name, model_type, df_save, args):
+def test(model_name, model_type, args):
 
 	if model_type=='kd':
 		model = RNN_small(timesteps=RNN_INPUT_SIZE)
@@ -80,9 +81,9 @@ def test(model_name, model_type, df_save, args):
 		output = Concatenate()([probs_1, probs_T])
 		model = Model(inputs=model.input, outputs=output)
 
-		model.load_weights('./weights/'+model_name)
+		model.load_weights('./weights_kd/'+model_name)
 	else:
-		model = tf.keras.models.load_model('./weights/'+model_name)
+		model = tf.keras.models.load_model('./weights_'+model_type'/'+model_name)
 
 	print(model.summary())
 
@@ -121,11 +122,6 @@ def test(model_name, model_type, df_save, args):
 	print('F1-score %.4f' % f1)
 	print('fp rate', fp_rate, 'fn_rate', fn_rate)
 
-	df_save['test_acc'] = acc
-	df_save['test_pr'] = pr
-	df_save['test_re'] = re
-	df_save['test_f1'] = f1
-	df_save['test_fp'] = fp_rate
-	df_save['test_fn'] = fn_rate
+	scores = [acc, pr, re, f1, fp_rate, fn_rate]
 
-	return df_save
+	return scores

@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
+import time
 from scipy.special import softmax
 import sys
 import tensorflow as tf
@@ -79,8 +80,15 @@ Y_val = np.concatenate((Y_val, Y_val_soft), axis=1)
 print("Train Data Shape", X_tr.shape, Y_tr.shape)
 print("Val Data Shape", X_val.shape, Y_val.shape)
 
+timestampTime = time.strftime("%H%M%S")
+timestampDate = time.strftime("%d%m%Y")
+timestampLaunch = timestampDate + '_' + timestampTime
+
+wts_dir = './weights_'+timestampLaunch+'/'
+if not os.path.exists(wts_dir): os.makedirs(wts_dir)
+
 score_string = 'val_acc-{val_acc:.4f}_kd_tr_acc-{acc:.4f}_bestEp-{epoch:02d}'
-model_save_name = './weights/'+score_string+'_bs-'+str(args.batch_size)+'_lr-'+str(args.learning_rate)+'_dr-'+str(args.drop_rate)+\
+model_save_name = wts_dir+score_string+'_bs-'+str(args.batch_size)+'_lr-'+str(args.learning_rate)+'_dr-'+str(args.drop_rate)+\
 				  '_temp-'+str(args.temperature)+'_fs-'+str(args.filter_scale)+'_alpha-'+str(args.alpha)+'.h5'
 
 checkpoint = ModelCheckpoint(filepath=model_save_name, monitor='val_acc', verbose=1, save_weights_only=True, save_best_only=True, mode='auto')
@@ -109,8 +117,12 @@ best_model_name = 'val_acc-'+'{0:.4f}_kd'.format(best_val_acc)+'_tr_acc-'+'{0:.4
 save_path = './results/'
 if not os.path.exists(save_path): os.makedirs(save_path)
 
-df_save = test(best_model_name, 'kd', df_save, args)
-suffix = best_model_name[:-3]+'_test_acc-'+'{0:.4f}'.format(df_save['test_acc'])
+scores = test(best_model_name, 'kd', args)
+suffix = best_model_name[:-3]+'_acc-{0:.4f}'.format(scores[0])+'_pr-{0:.4f}'.format(scores[1])+'_re-{0:.4f}'.format(scores[2])+\
+        '_f1-{0:.4f}'.format(scores[3])+'_fp-{0:.4f}'.format(scores[4])+'_fn-{0:.4f}'.format(scores[5])
+
 df_save.to_csv(open(save_path + suffix + '.csv', 'w'))
+
+if os.path.exists(wts_dir): os.rmdir(wts_dir)
 
 print("Finished!")

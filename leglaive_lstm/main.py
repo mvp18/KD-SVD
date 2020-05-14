@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
+import time
 import sys
 import tensorflow as tf
 from tensorflow import keras
@@ -45,8 +46,15 @@ opt = Adam(lr=args.learning_rate)
 model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['acc'])
 print(model.summary())
 
+timestampTime = time.strftime("%H%M%S")
+timestampDate = time.strftime("%d%m%Y")
+timestampLaunch = timestampDate + '_' + timestampTime
+
+wts_dir = './weights_'+timestampLaunch+'/'
+if not os.path.exists(wts_dir): os.makedirs(wts_dir)
+
 score_string = 'val_acc-{val_acc:.4f}_'+args.model_type+'_tr_acc-{acc:.4f}_bestEp-{epoch:02d}'
-model_save_name = './weights/'+score_string+'_bs-'+str(args.batch_size)+'_lr-'+str(args.learning_rate)+'.h5'
+model_save_name = wts_dir+score_string+'_bs-'+str(args.batch_size)+'_lr-'+str(args.learning_rate)+'.h5'
 
 checkpoint = ModelCheckpoint(filepath=model_save_name, monitor='val_acc', verbose=1, save_weights_only=False, save_best_only=True, mode='auto')
     
@@ -82,8 +90,12 @@ best_model_name = 'val_acc-'+'{0:.4f}_'.format(best_val_acc)+args.model_type+'_t
 save_path = './results/'
 if not os.path.exists(save_path): os.makedirs(save_path)
 
-df_save = test(best_model_name, args.model_type, df_save, args)
-suffix = best_model_name[:-3]+'test_acc-'+'{0:.4f}_'.format(df_save['test_acc'])
+scores = test(best_model_name, args.model_type, args)
+suffix = best_model_name[:-3]+'_acc-{0:.4f}'.format(scores[0])+'_pr-{0:.4f}'.format(scores[1])+'_re-{0:.4f}'.format(scores[2])+\
+		'_f1-{0:.4f}'.format(scores[3])+'_fp-{0:.4f}'.format(scores[4])+'_fn-{0:.4f}'.format(scores[5])
+
 df_save.to_csv(open(save_path + suffix + '.csv', 'w'))
+
+if os.path.exists(wts_dir): os.rmdir(wts_dir)
 
 print("Finished!")
