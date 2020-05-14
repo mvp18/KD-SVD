@@ -8,31 +8,31 @@ from sklearn.metrics import f1_score, precision_score, recall_score, confusion_m
 import argparse
 import h5py
 
-from load_data import *
 from model import *
-from config_rnn import *
+from load_data import *
+from config_cnn import *
 
 def acc(y_true, y_pred):
-	y_true_hard = y_true[:, :, :2]
-	y_pred_hard = y_pred[:, :, :2]
+	y_true_hard = y_true[:, :2]
+	y_pred_hard = y_pred[:, :2]
 	return categorical_accuracy(y_true_hard, y_pred_hard)
 
 def categorical_crossentropy(y_true, y_pred):
-	y_true_hard = y_true[:, :, :2]
-	y_pred_hard = y_pred[:, :, :2]
+	y_true_hard = y_true[:, :2]
+	y_pred_hard = y_pred[:, :2]
 	return logloss(y_true_hard, y_pred_hard)
 
 def soft_logloss(y_true, y_pred):     
-	y_true_softs = y_true[:, :, 2:]
-	y_pred_softs = y_pred[:, :, 2:]
+	y_true_softs = y_true[:, 2:]
+	y_pred_softs = y_pred[:, 2:]
 	return logloss(y_true_softs, y_pred_softs)
 
 def kd_loss(alpha, temperature):
 
 	def custom_loss(y_true, y_pred):
 
-		y_true, y_true_softs = y_true[: , :, :2], y_true[: , :, 2:]
-		y_pred, y_pred_softs = y_pred[: , :, :2], y_pred[: , :, 2:]
+		y_true, y_true_softs = y_true[: , :2], y_true[: , 2:]
+		y_pred, y_pred_softs = y_pred[: , :2], y_pred[: , 2:]
 		
 		loss = (1-alpha)*logloss(y_true, y_pred) + alpha*(temperature**2)*logloss(y_true_softs, y_pred_softs)
 	
@@ -46,9 +46,9 @@ def sample_scores(loaded_model, model_type, song):
 
 	y_pred = loaded_model.predict(x_test, verbose=1)
 
-	if model_type=='kd': y_pred = y_pred[:, :, :2]
+	if model_type=='kd': y_pred = y_pred[:, :2]
 
-	y_pred = np.argmax(y_pred, axis=2)
+	y_pred = np.argmax(y_pred, axis=1)
 
 	y_pred = y_pred.reshape(-1).astype(int)
 	y_test = y_test.reshape(-1).astype(int)
@@ -71,12 +71,12 @@ def sample_scores(loaded_model, model_type, song):
 def test(model_name, model_type, df_save, args):
 
 	if model_type=='kd':
-		model = RNN_small(timesteps=RNN_INPUT_SIZE)
+		model = Schluter_CNN(args.drop_rate, args.filter_scale)
 		model.pop()
 		model_logits = model.layers[-1].output
 		model_logits_T = Lambda(lambda x: x/args.temperature)(model_logits)
-		probs_T = Softmax(axis=2)(model_logits_T)
-		probs_1 = Softmax(axis=2)(model_logits)
+		probs_T = Softmax(axis=1)(model_logits_T)
+		probs_1 = Softmax(axis=1)(model_logits)
 		output = Concatenate()([probs_1, probs_T])
 		model = Model(inputs=model.input, outputs=output)
 

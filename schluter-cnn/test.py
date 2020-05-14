@@ -12,7 +12,7 @@ from config_cnn import *
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-model', '--model_name', default='val_acc-0.7920_tr_acc-0.9405_bestEp-05_bs-32_lr-0.0001_dr-0.2.h5', type=str)
+parser.add_argument('-model', '--model_name', default='teacher_val_acc-0.7920_tr_acc-0.9405_bestEp-05_bs-32_lr-0.0001_dr-0.2.h5', type=str)
 parser.add_argument('-data', '--dataset', default='jamendo', type=str)
 parser.add_argument('-seed', '--rand_seed', default=0, type=int)
 

@@ -76,13 +76,13 @@ corr_tr_acc = tr_acc[idx]
 
 df_save = pd.DataFrame({'tr_loss':tr_loss, 'val_loss':val_loss, 'tr_acc':tr_acc, 'val_acc':val_acc})
 
-best_model_name = 'val_acc-'+'{0:.4f}_'.format(best_val_acc)+args.model_type+'_tr_acc-'+'{0:.4f}'.format(corr_tr_acc)+'_bestEp-'+str(idx+1)+\
-                  '_bs-'+str(args.batch_size)+'_lr-'+str(args.learning_rate)+'.h5'
+best_model_name = 'val_acc-'+'{0:.4f}_'.format(best_val_acc)+args.model_type+'_tr_acc-'+'{0:.4f}'.format(corr_tr_acc)+\
+				  '_bestEp-'+'{:02d}'.format(idx+1)+'_bs-'+str(args.batch_size)+'_lr-'+str(args.learning_rate)+'.h5'
 
 save_path = './results/'
 if not os.path.exists(save_path): os.makedirs(save_path)
 
-df_save = test(best_model_name, args.model_type, df_save)
+df_save = test(best_model_name, args.model_type, df_save, args)
 suffix = best_model_name[:-3]+'test_acc-'+'{0:.4f}_'.format(df_save['test_acc'])
 df_save.to_csv(open(save_path + suffix + '.csv', 'w'))
 
