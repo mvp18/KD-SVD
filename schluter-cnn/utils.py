@@ -69,7 +69,7 @@ def sample_scores(loaded_model, model_type, song):
 
 	return y_pred, y_test
 
-def test(model_name, model_type, args):
+def test(model_name, model_type, wts_dir, args):
 
 	if model_type=='kd':
 		model = Schluter_CNN(args.drop_rate, args.filter_scale)
@@ -81,9 +81,9 @@ def test(model_name, model_type, args):
 		output = Concatenate()([probs_1, probs_T])
 		model = Model(inputs=model.input, outputs=output)
 
-		model.load_weights('./weights_kd/'+model_name)
+		model.load_weights(wts_dir+model_name)
 	else:
-		model = tf.keras.models.load_model('./weights_'+model_type'/'+model_name)
+		model = tf.keras.models.load_model(wts_dir+model_name)
 
 	print(model.summary())
 

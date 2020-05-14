@@ -117,7 +117,7 @@ best_model_name = 'val_acc-'+'{0:.4f}_kd'.format(best_val_acc)+'_tr_acc-'+'{0:.4
 save_path = './results/'
 if not os.path.exists(save_path): os.makedirs(save_path)
 
-scores = test(best_model_name, 'kd', args)
+scores = test(best_model_name, 'kd', wts_dir, args)
 suffix = best_model_name[:-3]+'_acc-{0:.4f}'.format(scores[0])+'_pr-{0:.4f}'.format(scores[1])+'_re-{0:.4f}'.format(scores[2])+\
         '_f1-{0:.4f}'.format(scores[3])+'_fp-{0:.4f}'.format(scores[4])+'_fn-{0:.4f}'.format(scores[5])
 
