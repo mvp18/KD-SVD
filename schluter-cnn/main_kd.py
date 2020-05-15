@@ -56,7 +56,7 @@ probs_1 = Softmax(axis=1)(student_logits)
 output = Concatenate()([probs_1, probs_T])
 student = Model(inputs=student.input, outputs=output)
 
-student.compile(optimizer=opt, loss=kd_loss(args.alpha, args.temperature), metrics=[acc, categorical_crossentropy, soft_logloss])
+student.compile(optimizer=opt, loss=kd_loss(args.alpha, args.temperature), metrics=[acc, categorical_crossentropy, kld_loss])
 
 print('\nStudent Model:\n')
 print(student.summary())
@@ -90,7 +90,7 @@ if not os.path.exists(wts_dir): os.makedirs(wts_dir)
 
 score_string = 'val_acc-{val_acc:.4f}_kd_tr_acc-{acc:.4f}_bestEp-{epoch:02d}'
 model_save_name = wts_dir+score_string+'_bs-'+str(args.batch_size)+'_lr-'+str(args.learning_rate)+'_dr-'+str(args.drop_rate)+\
-				  '_temp-'+str(args.temperature)+'_fs-'+str(args.filter_scale)+'_alpha-'+str(args.alpha)+'.h5'
+				  '_fs-'+str(args.filter_scale)+'_temp-'+str(args.temperature)+'_alpha-'+str(args.alpha)+'.h5'
 
 checkpoint = ModelCheckpoint(filepath=model_save_name, monitor='val_acc', verbose=1, save_weights_only=True, save_best_only=True, mode='auto')
     

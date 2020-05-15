@@ -23,10 +23,10 @@ def categorical_crossentropy(y_true, y_pred):
 	y_pred_hard = y_pred[:, :, :2]
 	return logloss(y_true_hard, y_pred_hard)
 
-def soft_logloss(y_true, y_pred):     
+def kld_loss(y_true, y_pred):     
 	y_true_softs = y_true[:, :, 2:]
 	y_pred_softs = y_pred[:, :, 2:]
-	return logloss(y_true_softs, y_pred_softs)
+	return kullback_leibler_divergence(y_true_softs, y_pred_softs)
 
 def kd_loss(alpha, temperature):
 

@@ -54,7 +54,7 @@ probs_1 = Softmax(axis=2)(student_logits)
 output = Concatenate()([probs_1, probs_T])
 student = Model(inputs=student.input, outputs=output)
 
-student.compile(optimizer=opt, loss=kd_loss(args.alpha, args.temperature), metrics=[acc, categorical_crossentropy, soft_logloss])
+student.compile(optimizer=opt, loss=kd_loss(args.alpha, args.temperature), metrics=[acc, categorical_crossentropy, kld_loss])
 
 print('\nStudent Model:\n')
 print(student.summary())
