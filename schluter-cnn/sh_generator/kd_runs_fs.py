@@ -1,6 +1,6 @@
 import numpy as np
 
-jobstr = "python main_kd.py -e 50 -es 5 -rd_lr 3 -bs 32 -lr 1e-4 -dr 0.2 "
+jobstr = "python3 main_kd.py -e 50 -es 5 -rd_lr 3 -bs 32 -lr 1e-4 -dr 0.2 "
 jobs = []
 
 for fs in [2, 4, 16, 32]:
