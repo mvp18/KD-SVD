@@ -107,6 +107,7 @@ def load_xy_data(song, mel_dir, label_dir, train_valid=None):
                 sys.exit()
 
         total_x_norm = (total_x - mean) / std
+        total_x_norm = np.swapaxes(total_x_norm, 1, 2)
         # total_x_norm = np.expand_dims(total_x_norm, axis=3)
 
     else:
@@ -132,6 +133,7 @@ def load_xy_data(song, mel_dir, label_dir, train_valid=None):
             sys.exit()
 
         total_x_norm = (total_x - mean) / std
+        total_x_norm = np.swapaxes(total_x_norm, 1, 2)
         # total_x_norm = np.expand_dims(total_x_norm, axis=3)
 
         print('X shape:{}; Y shape:{}.'.format(total_x_norm.shape, total_y.shape))
