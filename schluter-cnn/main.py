@@ -90,7 +90,8 @@ best_model_name = 'val_acc-'+'{0:.4f}_'.format(best_val_acc)+args.model_type+'_t
 				  '_bestEp-'+'{:02d}'.format(idx+1)+'_bs-'+str(args.batch_size)+'_lr-'+str(args.learning_rate)+\
 				  '_dr-'+str(args.drop_rate)+'_fs-'+str(args.filter_scale)+'.h5'
 
-save_path = './results/'
+save_path = './results/student/'+'fs'+str(args.filter_scale)+'/'
+
 if not os.path.exists(save_path): os.makedirs(save_path)
 
 scores = test(best_model_name, args.model_type, wts_dir, args)

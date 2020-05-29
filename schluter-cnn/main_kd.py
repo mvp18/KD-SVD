@@ -115,7 +115,8 @@ best_model_name = 'val_acc-'+'{0:.4f}_kd'.format(best_val_acc)+'_tr_acc-'+'{0:.4
                   '_bs-'+str(args.batch_size)+'_lr-'+str(args.learning_rate)+'_dr-'+str(args.drop_rate)+'_fs-'+str(args.filter_scale)+\
                   '_temp-'+str(args.temperature)+'_alpha-'+ str(args.alpha)+'.h5'
 
-save_path = './results/'
+save_path = './results/kd/'+'fs'+str(args.filter_scale)+'/'
+
 if not os.path.exists(save_path): os.makedirs(save_path)
 
 scores = test(best_model_name, 'kd', wts_dir, args)

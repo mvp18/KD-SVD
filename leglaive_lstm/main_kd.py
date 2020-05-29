@@ -112,7 +112,7 @@ df_save = pd.DataFrame({'tr_loss':tr_loss, 'val_loss':val_loss, 'tr_acc':tr_acc,
 best_model_name = 'val_acc-'+'{0:.4f}_kd'.format(best_val_acc)+'_tr_acc-'+'{0:.4f}'.format(corr_tr_acc)+'_bestEp-'+'{:02d}'.format(idx+1)+\
                   '_bs-'+str(args.batch_size)+'_lr-'+str(args.learning_rate)+'_temp-'+str(args.temperature)+'_alpha-'+ str(args.alpha)+'.h5'
 
-save_path = './results/'
+save_path = './results/kd/'
 if not os.path.exists(save_path): os.makedirs(save_path)
 
 scores = test(best_model_name, 'kd', wts_dir, args)

@@ -32,5 +32,5 @@ def Schluter_CNN(dropout_rate=0.0, filter_scale=1):
     return model
 
 if __name__ == '__main__':
-    model = Schluter_CNN(0.5, 1)
+    model = Schluter_CNN(0.5, 32)
     print(model.summary())
