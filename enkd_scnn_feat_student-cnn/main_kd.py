@@ -77,7 +77,7 @@ teacher_cnn_tr_prob_T = softmax(teacher_cnn_tr_logits/args.temperature, axis=1)
 
 # Val Logits
 teacher_lstm_val_logits = teacher_lstm.predict(np.swapaxes(np.squeeze(X_val, axis=3), 1, 2), verbose=1)
-teacher_cnn_val_logits = teacher_cnn.predict(np.expand_dims(np.swapaxes(X_val, 1, 2), axis=3), verbose=1)
+teacher_cnn_val_logits = teacher_cnn.predict(X_val, verbose=1)
 
 teacher_lstm_val_prob_T = softmax(teacher_lstm_val_logits/args.temperature, axis=1)
 teacher_cnn_val_prob_T = softmax(teacher_cnn_val_logits/args.temperature, axis=1)
