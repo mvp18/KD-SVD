@@ -49,7 +49,8 @@ else:
 opt = Adam(lr=args.learning_rate)
 
 # Removing softmax layers
-teacher.pop()
+teacher_lstm.pop()
+teacher_cnn.pop()
 student.pop()
 
 student_logits = student.layers[-1].output

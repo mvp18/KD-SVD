@@ -74,7 +74,7 @@ def test(model_name, model_type, wts_dir, args):
 	if model_type=='student':
 		model = RNN_small(timesteps=CNN_INPUT_SIZE)
 	elif model_type=='teacher':
-		model = Leglaive_RNN(timesteps=CNN_INPUT_SIZE)	
+		model = Leglaive_RNN(timesteps=CNN_INPUT_SIZE)
 	
 	model.pop()
 	model_logits = model.layers[-1].output
