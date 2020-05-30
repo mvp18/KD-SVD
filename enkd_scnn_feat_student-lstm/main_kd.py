@@ -71,27 +71,32 @@ Y_tr = to_categorical(y_train, 2)
 X_val, y_val = load_xy_data(None, MEL_JAMENDO_DIR, JAMENDO_LABEL_DIR, 'valid')
 Y_val = to_categorical(y_val, 2)
 
+# Train Logits
 teacher_lstm_tr_logits = teacher_lstm.predict(X_tr, verbose=1)
-teacher_lstm_val_logits = teacher_lstm.predict(X_val, verbose=1)
-
 teacher_cnn_tr_logits = teacher_cnn.predict(np.expand_dims(np.swapaxes(X_tr, 1, 2), axis=3), verbose=1)
+
+teacher_lstm_tr_prob_T = softmax(teacher_lstm_tr_logits/args.temperature, axis=1)
+teacher_cnn_tr_prob_T = softmax(teacher_cnn_tr_logits/args.temperature, axis=1)
+
+# Val Logits
+teacher_lstm_val_logits = teacher_lstm.predict(X_val, verbose=1)
 teacher_cnn_val_logits = teacher_cnn.predict(np.expand_dims(np.swapaxes(X_val, 1, 2), axis=3), verbose=1)
 
-if args.combination=='am':
-	ensemble_tr_logits = (teacher_lstm_tr_logits+teacher_cnn_tr_logits)/2
-	ensemble_val_logits = (teacher_lstm_val_logits+teacher_cnn_val_logits)/2
+teacher_lstm_val_prob_T = softmax(teacher_lstm_val_logits/args.temperature, axis=1)
+teacher_cnn_val_prob_T = softmax(teacher_cnn_val_logits/args.temperature, axis=1)
+
+if args.combination=='am': 
+	Y_tr_soft = (teacher_lstm_tr_prob_T+teacher_cnn_tr_prob_T)/2
+	Y_val_soft = (teacher_lstm_val_prob_T+teacher_cnn_val_prob_T)/2
 elif args.combination=='gm':
-	GM = np.sqrt(teacher_lstm_tr_logits*teacher_cnn_tr_logits)
+	GM = np.sqrt(teacher_lstm_tr_prob_T*teacher_cnn_tr_prob_T)
 	GM /= GM.sum(axis=1)[:, np.newaxis]
-	ensemble_tr_logits = GM
-	GM = np.sqrt(teacher_lstm_val_logits*teacher_cnn_val_logits)
+	Y_tr_soft = GM
+	GM = np.sqrt(teacher_lstm_val_prob_T*teacher_cnn_val_prob_T)
 	GM /= GM.sum(axis=1)[:, np.newaxis]
-	ensemble_val_logits = GM
+	Y_val_soft = GM
 
-Y_tr_soft = softmax(ensemble_tr_logits/args.temperature, axis=1)
 Y_tr = np.concatenate((Y_tr, Y_tr_soft), axis=1)
-
-Y_val_soft = softmax(ensemble_val_logits/args.temperature, axis=1)
 Y_val = np.concatenate((Y_val, Y_val_soft), axis=1)
 
 print('\nLoading complete!\n')
