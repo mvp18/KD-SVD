@@ -74,8 +74,8 @@ Y_val = to_categorical(y_val, 2)
 teacher_lstm_tr_logits = teacher_lstm.predict(X_tr, verbose=1)
 teacher_lstm_val_logits = teacher_lstm.predict(X_val, verbose=1)
 
-teacher_cnn_tr_logits = teacher_cnn.predict(np.swapaxes(X_tr, 1, 2), verbose=1)
-teacher_cnn_val_logits = teacher_cnn.predict(np.swapaxes(X_val, 1, 2), verbose=1)
+teacher_cnn_tr_logits = teacher_cnn.predict(np.expand_dims(np.swapaxes(X_tr, 1, 2), axis=3), verbose=1)
+teacher_cnn_val_logits = teacher_cnn.predict(np.expand_dims(np.swapaxes(X_val, 1, 2), axis=3), verbose=1)
 
 if args.combination=='am':
 	ensemble_tr_logits = (teacher_lstm_tr_logits+teacher_cnn_tr_logits)/2
