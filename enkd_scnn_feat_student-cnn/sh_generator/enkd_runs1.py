@@ -4,8 +4,8 @@ jobstr = "python3 main_kd.py -e 50 -es 5 -rd_lr 3 -bs 32 -lr 1e-4 -dr 0.2 "
 jobs = []
 
 for temp in [5, 10, 15, 20]:
-	for alpha in np.arange(0.1, 0.91, 0.1):
-		for fs in [32, 4, 1]:
+	for alpha in np.arange(0.1, 0.91, 0.2):
+		for fs in [32, 8, 4]:
 			for comb in ['am', 'gm']:
 				jobs.append(jobstr + 
 				' '.join([
