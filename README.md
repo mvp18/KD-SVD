@@ -21,12 +21,17 @@ For dataset download, environment setup and data preparation, please refer to [t
 Refer to the following folders for reproducing results in the paper:
 
 [1] Tables 2-4: [schluter-cnn](https://github.com/mvp18/KD-SVD/tree/master/schluter-cnn)
+
 [2] Tables 5,6: [leglaive_lstm](https://github.com/mvp18/KD-SVD/tree/master/leglaive_lstm)
+
 [3] Table 7: [lstm_scnn_feat](https://github.com/mvp18/KD-SVD/tree/master/lstm_scnn_feat)
+
 [4] Table 8: [enkd_scnn_feat_student-cnn](https://github.com/mvp18/KD-SVD/tree/master/enkd_scnn_feat_student-cnn) and [enkd_scnn_feat_student-lstm](https://github.com/mvp18/KD-SVD/tree/master/enkd_scnn_feat_student-lstm)
 
-Inside each folder, run `main.py` for baselines and `main_kd.py` for kd expts.
+Inside each folder, run `main.py` for baselines and `main_kd.py` for knowledge-distillation expts.
+
 See `expts.sh` for sample runs.
+
 Check `results` folder to get hyperparameter configs corresponding to highest validation accuracy. The corresponding test metrics are reported in our paper.
 
 ## 🎓 Cite
